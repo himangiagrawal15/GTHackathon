@@ -1,5 +1,3 @@
-﻿# GTHackathon
-
 TrendSpotter: The Automated Insight Engine
 
 Tagline: A modular analytics pipeline that transforms raw AdTech marketing logs into structured campaign insights, platform-wise breakdowns, keyword analysis, charts, and AI-generated narratives delivered as final PDF reports.
@@ -7,127 +5,115 @@ Tagline: A modular analytics pipeline that transforms raw AdTech marketing logs 
 1. The Problem
 Context
 
-AdTech teams regularly work with raw logs exported from platforms such as Google Ads, Facebook Ads, and DV360. These logs contain thousands of rows spanning multiple campaigns, channels, and creative formats.
-Account Managers traditionally process these files manually and prepare performance reports for each client.
+AdTech teams receive daily CSV exports from Google Ads, Facebook Ads, DV360, and other advertising platforms. Account Managers must manually merge these files, compute CTR/CPM/CPC, analyze channels and keywords, create charts, and prepare client-ready reports.
 
 Pain Point
 
-Manually analyzing each campaign, creating charts, and summarizing insights consumes several hours every week. This leads to slow decision-making and missed opportunities for campaign optimization.
+This manual workflow is slow, repetitive, and error-prone. Decision-making suffers because insights arrive too late, and budget inefficiencies may continue unnoticed.
 
 Solution
 
-TrendSpotter automates the entire reporting pipeline.
-You supply a raw CSV file, and the system:
+TrendSpotter fully automates the reporting pipeline.
+You provide a raw CSV, and the system performs:
 
-Separates the data by campaign
+Campaign-level breakdown
 
-Performs campaign-level analysis
+Platform-level (ext_service_name) analysis
 
-Performs platform-level analysis
+Channel-level segmentation
 
-Generates charts
+Keyword and search-tag insights
 
-Requests qualitative insights from an LLM
+Time-series trends
 
-Produces individual PDF reports (one per campaign)
+LLM-generated narrative analysis
 
-This enables fast, accurate, and scalable reporting for hundreds of campaigns simultaneously.
+PDF report generation
+
+TrendSpotter removes manual work and scales seamlessly to hundreds of campaigns.
 
 2. Dataset Description
 
-TrendSpotter is built around a real AdTech-style dataset with fields representing campaign identifiers, creative details, channel metadata, platform information, keywords, impressions, clicks, cost, and time-based signals.
+TrendSpotter is designed around a multi-platform AdTech dataset containing detailed metrics from advertising campaigns.
 
-Key Dataset Fields
+Key Fields
 
 campaign_item_id
-Unique identifier for each advertising campaign. Used to segment the dataset and generate a dedicated PDF report for each campaign.
+Unique campaign identifier.
+TrendSpotter uses this to generate a separate analytical report for each campaign.
 
-ext_service_name / ext_service_id
-Advertising platforms such as Google Ads, Facebook Ads, and DV360.
+ext_service_id / ext_service_name
+Advertising platforms (Google Ads, Facebook Ads, DV360).
 
 channel_name
-Channel type (Search, Display, Social, Video, Mobile).
+Channel type: Search, Display, Social, Video, or Mobile.
 
 impressions, clicks, unique_reach, total_reach
-Core performance indicators used for CTR, CPM, CPC, engagement, and trend analysis.
+Core engagement metrics used to compute CTR, CPM, CPC, and reach quality.
 
 media_cost_usd, max_bid_cpm, campaign_budget_usd
-Spend-related fields used for efficiency metrics.
+Budget and spend metrics for cost-efficiency analysis.
 
-creative_width, creative_height, template_id, creative_id
-Creative attributes used for performance interpretation.
+creative_id, creative_width, creative_height, template_id
+Creative metadata for performance interpretation.
 
 keywords, search_tags
-Keyword-level and intent-level metadata used for text-based analysis.
+Intent-level metadata extracted for keyword performance analysis.
 
 time, time_zone, weekday_cat
-Time-related fields used to compute daily, hourly, and weekday/weekend performance.
+Used for time-based trend, daily behavior, and weekday/weekend comparison.
 
 Why This Dataset Works
 
-It provides all the information needed for:
+It contains all dimensions needed for deep AdTech reporting:
 
-Individual campaign evaluation
+Campaign metrics
 
-Multi-platform comparison
+Platform comparisons
 
-Channel performance breakdown
+Channel efficiency
 
-Keyword performance exploration
+Keyword and search-tag performance
 
-Daily trend visualization
+Creative-level insights
 
-This enables comprehensive automated reporting.
+Daily trend analysis
 
-3. Campaign-Specific Reporting (Important Feature)
+This supports both numeric and AI-generated insight generation.
 
-TrendSpotter treats each campaign as a separate analytical unit.
+3. Campaign-Specific Reporting
 
-Per-Campaign Breakdown
+A core feature of TrendSpotter is that each campaign receives its own independent analysis and its own PDF report.
 
-For every unique campaign_item_id, the system:
+For Every campaign_item_id, the system performs:
 
-Extracts all related records
+Extracts all related data
 
-Computes campaign-level KPIs
+Computes CTR, CPM, CPC, spend, reach, creative performance
 
-Generates campaign-specific charts
+Breaks down performance by platform (ext_service_name)
 
-Analyzes performance within each platform used
+Compares channel contributions (Search, Display, Social, Video, Mobile)
 
-Breaks down channel contributions
+Analyzes keyword and search-tag effectiveness
 
-Examines keywords and search tags
+Computes daily CTR and spend trends
 
-Computes daily CTR, impressions, and spend trends
+Generates visualizations
 
-Produces a narrative summary using an LLM
+Produces a narrative summary using Google Gemini
 
 Generates a dedicated PDF report for that campaign
 
-Output Guarantee
+Output
 
-If a CSV contains 157 campaigns, TrendSpotter will generate:
+If a CSV contains 157 campaigns, the pipeline produces:
 
-157 independent PDF reports
-+ 1 master summary report (optional)
+157 individual PDF reports
++ 1 master summary (optional)
 
 
-Each PDF is complete with:
-
-Campaign overview
-
-Platform-wise performance
-
-Channel-level insights
-
-Keyword/search tag analytics
-
-Trend charts
-
-AI-generated analysis
-
-This makes the system scalable to hundreds of campaigns in a single file.
+Each PDF contains tables, charts, insights, and recommendations.
 
 4. Expected End Result
 Input
@@ -136,55 +122,61 @@ A raw CSV file containing multi-campaign AdTech logs.
 
 Output
 
-For each campaign:
+For every campaign:
 
-CTR, CPM, CPC, spend summary
+KPI summary (CTR, CPM, CPC, spend, reach)
 
-Platform-level comparison (Google Ads vs Facebook Ads vs DV360)
+Platform-level comparisons
 
-Channel performance insights
+Channel-level efficiency metrics
 
 Keyword and search tag analysis
 
-Time-based trend charts
+Creative analysis
 
-Executive summary generated through Gemini
+Daily trend charts
 
-A standalone multi-page PDF
+LLM-generated insights
+
+A standalone, multi-page PDF report
 
 5. Technical Approach
 
-TrendSpotter is built using a multi-layered analytics pipeline.
+TrendSpotter’s pipeline consists of several analytical layers.
 
 Data Processing
 
-Polars is used for high-performance data ingestion, schema validation, and grouping.
+Polars is used for ingestion, schema validation, and transformation.
 
-Campaign-Level Logic
+Campaign-Level Analysis
 
-Data is grouped by campaign_item_id and processed independently.
+Grouped by campaign_item_id and enriched with engineered metrics.
 
-Platform-Level Logic
+Platform-Level Analysis
 
-Within each campaign, performance is segmented by ext_service_name.
+Comparisons between Google Ads, Facebook Ads, and DV360 based on spend and performance.
 
-Channel-Level Logic
+Channel Analysis
 
-The system compares Search, Display, Social, Mobile, and Video performance.
+Evaluation of Search, Display, Social, Video, and Mobile contributions.
+
+Keyword Insights
+
+High- and low-performing keywords extracted and ranked.
 
 LLM Integration
 
-Google Gemini generates the narrative explanations, insights, and recommendations.
+Google Gemini generates executive summaries, platform comparisons, and optimization recommendations.
 
 Reporting
 
-ReportLab/WeasyPrint is used to generate a fully-structured campaign PDF.
+ReportLab or WeasyPrint composes the final structured PDF.
 
 6. Tech Stack
 
 Python 3.11
 
-Polars DataFrame Engine
+Polars
 
 Google Gemini API
 
@@ -192,4 +184,4 @@ Matplotlib / Plotly
 
 ReportLab / WeasyPrint
 
-Docker and Docker Compose
+Docker & Docker Compose
