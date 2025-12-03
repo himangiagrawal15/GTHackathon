@@ -38,11 +38,7 @@ env/
 Thumbs.db
 
 # Application specific
-uploads/*
-!uploads/.gitkeep
-outputs/*
-!outputs/.gitkeep
-outputs/charts/*
+
 
 # API Keys and Secrets
 config.py
